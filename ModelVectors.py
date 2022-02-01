@@ -20,7 +20,7 @@ class ModelVectors():
         else:
             return None
     
-    def most_similar(self, positive, negative, top_k=5):
+    def most_similar(self, positive, negative=list(), top_k=5):
         for pos in positive:
             if pos not in self.word2idx:
                 raise Exception('Tokens must be in the vocabulary')
@@ -47,7 +47,7 @@ class ModelVectors():
             F.cosine_similarity(result_vec, self.vectors[consider_indices])
         , top_k)
 
-        return (
-            [self.vocab[idx] for idx in cosine_distances.indices], 
-            cosine_distances.values
-        )
+        return [
+            (self.vocab[idx], conf.item()) for idx, conf in \
+                zip(cosine_distances.indices, cosine_distances.values)
+        ]
